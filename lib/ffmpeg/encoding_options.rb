@@ -15,7 +15,7 @@ module FFMPEG
       seek    = params.select {|p| p =~ /\-ss/ }
       codecs = params.select { |p| p =~ /codec/ }
       presets = params.select { |p| p =~ /\-.pre/ }
-      watermarkoptions = params.select { p=~ /filter_complex/ }
+      watermarkoptions = params.select { p =~ /filter_complex/ }
       other = params - codecs - presets - watermarkoptions - source - seek
       params = seek + source + watermarkoptions + codecs + presets + other
 
