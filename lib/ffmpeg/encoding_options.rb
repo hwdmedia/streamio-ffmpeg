@@ -11,11 +11,13 @@ module FFMPEG
 
       # codecs should go before the presets so that the files will be matched successfully
       # all other parameters go after so that we can override whatever is in the preset
+      source  = params.select {|p| p =~ /\-i/ }
+      seek    = params.select {|p| p =~ /\-ss/ }
       codecs = params.select { |p| p =~ /codec/ }
       presets = params.select { |p| p =~ /\-.pre/ }
-      watermarkoptions = params.select { |p| p =~ /i / || p=~ /filter_complex/ }  
-      other = params - codecs - presets - watermarkoptions
-      params = watermarkoptions + codecs + presets + other
+      watermarkoptions = params.select { p=~ /filter_complex/ }
+      other = params - codecs - presets - watermarkoptions - source - seek
+      params = seek + source + watermarkoptions + codecs + presets + other
 
       params_string = params.join(" ")
       params_string << " #{convert_aspect(calculate_aspect)}" if calculate_aspect?
@@ -169,6 +171,10 @@ module FFMPEG
 
     def convert_custom(value)
       value
+    end
+
+    def convert_input(value)
+      "-i #{Shellwords.escape(value)}"
     end
 
     def k_format(value)
