@@ -16,7 +16,7 @@ module FFMPEG
       codecs = params.select { |p| p =~ /codec/ }
       presets = params.select { |p| p =~ /\-.pre/ }
       watermarkoptions = params.select { |p| p =~ /filter_complex/ }
-      noaccurate = params.select { |p| p =~ /\-noaccurate/ }
+      noaccurate = params.select { |p| p =~ /\-noaccurate_seek/ }
       other = params - codecs - presets - watermarkoptions - source - seek - noaccurate
       params = noaccurate + seek + source + watermarkoptions + codecs + presets + other
 
@@ -179,7 +179,7 @@ module FFMPEG
     end
 
     def convert_noaccurate(value)
-      "-noaccurate" if value
+      "-noaccurate_seek" if value
     end
 
     def k_format(value)
