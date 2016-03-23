@@ -12,6 +12,11 @@ module FFMPEG
         command.should == '-ss 2500 -i my_movie.mp4'
       end
 
+      it "should order input, seek_time and noaccurate correctly" do
+        command = EncodingOptions.new(input: 'my_movie.mp4', seek_time: 2500, noaccurate: true).to_s
+        command.should == '-noaccurate -ss 2500 -i my_movie.mp4'
+      end
+
       it "should know the width from the resolution or be nil" do
         EncodingOptions.new(resolution: "320x240").width.should == 320
         EncodingOptions.new.width.should be_nil

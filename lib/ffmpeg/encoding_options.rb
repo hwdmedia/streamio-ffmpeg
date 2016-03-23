@@ -16,8 +16,9 @@ module FFMPEG
       codecs = params.select { |p| p =~ /codec/ }
       presets = params.select { |p| p =~ /\-.pre/ }
       watermarkoptions = params.select { |p| p =~ /filter_complex/ }
-      other = params - codecs - presets - watermarkoptions - source - seek
-      params = seek + source + watermarkoptions + codecs + presets + other
+      noaccurate = params.select { |p| p =~ /\-noaccurate/ }
+      other = params - codecs - presets - watermarkoptions - source - seek - noaccurate
+      params = noaccurate + seek + source + watermarkoptions + codecs + presets + other
 
       params_string = params.join(" ")
       params_string << " #{convert_aspect(calculate_aspect)}" if calculate_aspect?
@@ -175,6 +176,10 @@ module FFMPEG
 
     def convert_input(value)
       "-i #{Shellwords.escape(value)}"
+    end
+
+    def convert_noaccurate(value)
+      "-noaccurate" if value
     end
 
     def k_format(value)
