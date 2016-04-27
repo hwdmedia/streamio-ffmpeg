@@ -188,7 +188,7 @@ module FFMPEG
       unless url.query.nil?
         query += '?' + url.query
       end
-      res = req.request_head(query)
+      res = req.request_get(query)
       res.code == '200'
     rescue Errno::ENOENT
       false
