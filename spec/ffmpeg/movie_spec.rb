@@ -17,6 +17,24 @@ module FFMPEG
         end
       end
 
+      context "given a non existing url" do
+        let(:movie) { Movie.new('http://example.com/test.mp4') }
+
+        it "should throw ArgumentError" do
+          expect { movie }.to raise_error(Errno::ENOENT, /does not exist/)
+        end
+      end
+
+      context "given an existing url" do
+        let(:movie) { Movie.new('http://s3-eu-west-1.amazonaws.com/zinema-dev/videos/75ad6070-052e-11e6-9a30-833619357e70.mp4') }
+
+        it "should run ffmpeg successfully" do
+          expect(movie.duration).to be_within(13.0).of(17.0)
+          movie.width.should == 720
+          movie.height.should == 1280
+        end
+      end
+
       context "given a file containing a single quotation mark in the filename" do
         let(:movie) { Movie.new("#{fixture_path}/movies/awesome'movie.mov") }
 

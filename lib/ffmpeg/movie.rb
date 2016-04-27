@@ -1,5 +1,6 @@
 require 'time'
 require 'multi_json'
+require 'net/http'
 
 module FFMPEG
   class Movie
@@ -9,7 +10,7 @@ module FFMPEG
     attr_reader :container
 
     def initialize(path)
-      raise Errno::ENOENT, "the file '#{path}' does not exist" unless File.exist?(path)
+      raise Errno::ENOENT, "the file '#{path}' does not exist" unless movie_exists?(path)
 
       @path = path
 
@@ -171,6 +172,26 @@ module FFMPEG
       output[/test/] # Running a regexp on the string throws error if it's not UTF-8
     rescue ArgumentError
       output.force_encoding("ISO-8859-1")
+    end
+
+    private
+    def movie_exists?(path)
+      File.exist?(path) || url_exists?(path)
+    end
+
+    def url_exists?(path)
+      url = URI.parse(path)
+      return false if url.host.nil?
+      req = Net::HTTP.new(url.host, url.port)
+      req.use_ssl = (url.scheme == 'https')
+      query = url.path || '/'
+      unless url.query.nil?
+        query += '?' + url.query
+      end
+      res = req.request_head(query)
+      res.code == '200'
+    rescue Errno::ENOENT
+      false
     end
   end
 end
