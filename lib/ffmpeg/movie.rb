@@ -15,7 +15,7 @@ module FFMPEG
       @path = path
 
       # ffmpeg will output to stderr
-      command = "#{FFMPEG.ffprobe_binary} -i #{Shellwords.escape(path)} -print_format json -show_format -show_streams -show_error"
+      command = "#{FFMPEG.ffprobe_binary} -i #{Shellwords.escape(path)} -print_format json -show_format -show_streams -show_error 2> >(grep -v 'Invalid SampleDelta' 1>&2)"
       std_output = ''
       std_error = ''
 
