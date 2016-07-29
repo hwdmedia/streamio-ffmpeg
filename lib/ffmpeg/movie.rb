@@ -15,13 +15,13 @@ module FFMPEG
       @path = path
 
       # ffmpeg will output to stderr
-      command = "#{FFMPEG.ffprobe_binary} -i #{Shellwords.escape(path)} -print_format json -show_format -show_streams -show_error 2> >(grep -v 'Invalid SampleDelta' 1>&2)"
+      command = "#{FFMPEG.ffprobe_binary} -i #{Shellwords.escape(path)} -print_format json -show_format -show_streams -show_error"
       std_output = ''
       std_error = ''
 
       Open3.popen3(command) do |stdin, stdout, stderr|
-        std_output = stdout.read unless stdout.nil?
         std_error = stderr.read unless stderr.nil?
+        std_output = stdout.read unless stdout.nil?
       end
 
       fix_encoding(std_output)
